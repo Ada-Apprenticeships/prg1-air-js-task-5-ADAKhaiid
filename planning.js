@@ -21,10 +21,23 @@ function readCsv(filename, delimiter = ',') {
     }
 }
 
-// Usage example
+const aeroplanesData = readCsv('aeroplanes.csv');
+if (aeroplanesData) {
+    aeroplanesData.forEach(row => {
+        console.log(row);
+    });
+}
+
 const airportsData = readCsv('airports.csv');
 if (airportsData) {
     airportsData.forEach(row => {
+        console.log(row);
+    });
+}
+
+const validFlightData = readCsv('valid_flight_data.csv');
+if (validFlightData) {
+    validFlightData.forEach(row => {
         console.log(row);
     });
 }
