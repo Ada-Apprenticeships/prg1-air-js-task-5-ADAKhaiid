@@ -1,4 +1,5 @@
 const fs = require('fs');
+const { type } = require('os');
 
 function readCsv(filename, delimiter = ',') {
     try {
@@ -21,23 +22,45 @@ function readCsv(filename, delimiter = ',') {
     }
 }
 
+class aeroplanes {
+    constructor(type, costPerSeat, maxFlightRange, economySeats, businessSeats, firstClassSeats) {
+        this._type = type;
+        this._costPerSeat = costPerSeat;
+        this._maxFlightRange = maxFlightRange;
+        this._economySeats = economySeats;
+        this._businessSeats = businessSeats;
+        this._firstClassSeats = firstClassSeats;
+    }
+}
+
+class airports {
+    constructor(code, fullname, distanceMAN, distanceLGW ){
+        this._code = code
+        this._fullName = fullname
+        this._distanceMAN = distanceMAN
+        this._distanceLGW = distanceLGW
+    }
+}
+
 const aeroplanesData = readCsv('aeroplanes.csv');
 if (aeroplanesData) {
-    aeroplanesData.forEach(row => {
-        console.log(row);
+    const aeroplanesInstances = aeroplanesData.map(row => {
+        const [type, costPerSeat, maxFlightRange, economySeats, businessSeats, firstClassSeats] = row;
+        return new aeroplanes(type, Number(costPerSeat.slice(1)), Number(maxFlightRange), Number(economySeats), Number(businessSeats), Number(firstClassSeats));
+        
     });
+        console.log(aeroplanesInstances)
 }
 
 const airportsData = readCsv('airports.csv');
 if (airportsData) {
-    airportsData.forEach(row => {
-        console.log(row);
+    const airportInstances = airportsData.map(row => {
+        const [code, fullname, distanceMAN, distanceLGW] = row;
+        return new airports(String(code), String(fullname), Number(distanceMAN), Number(distanceLGW))
+            
     });
+        // return airportInstances
+        console.log(airportInstances)
 }
 
-const validFlightData = readCsv('valid_flight_data.csv');
-if (validFlightData) {
-    validFlightData.forEach(row => {
-        console.log(row);
-    });
-}
+
