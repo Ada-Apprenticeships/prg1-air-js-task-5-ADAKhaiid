@@ -212,3 +212,16 @@ function main() {
 // Clear any old output file before generating a new one
 deleteExistingOutputFile(outputfile);
 main();
+
+module.exports = {
+    Airport,
+    Aeroplane,
+    readCsv,
+    createAirports,
+    createAeroplanes,
+    calculateIncome,
+    calculateCost,
+    displayFlightDetails,
+    main,
+    deleteExistingOutputFile,
+  };
