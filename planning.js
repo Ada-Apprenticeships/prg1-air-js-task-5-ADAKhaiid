@@ -72,7 +72,6 @@ function calculateIncome(bookings, prices) { // Calculates the income based on s
     return economyIncome + businessIncome + firstClassIncome;
 }
 
-
 function calculateCost(aeroplane, distance, totalSeats) { // Calculates the flight cost by scaling the seat cost based on distance and total seats
     // Distance-based adjustment to cost-per-seat, then multiply by total seats booked
     const costPerSeat = (aeroplane.costPerSeat * (distance / 100)).toFixed(2);
