@@ -125,13 +125,13 @@ function main() {
             economy: parseInt(row[3]),
             business: parseInt(row[4]),
             firstClass: parseInt(row[5])
-        };
+        }
 
         const prices = {
             economy: parseFloat(row[6]),
             business: parseFloat(row[7]),
             firstClass: parseFloat(row[8])
-        };
+        }
 
         const flight = { airport, aeroplane, bookings, prices }; // Creates an object with all the data
         outputLine += displayFlightDetails(flight) + '\n'; // Appends the flight details to the output string
