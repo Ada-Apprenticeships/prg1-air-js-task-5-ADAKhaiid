@@ -143,62 +143,70 @@ function main() {
 
     // Iterate through each row in the invalid flight data
     invalidFlightData.forEach(row => {
-    const airport = airports.find(a => a.code === row[1]);
-    const aeroplane = aeroplanes.find(a => a.model === row[2]);
-
-    // If the airport code is invalid, log an error and skip this row
-    if (!airport) { 
-        console.error(`Error: Invalid airport code '${row[1]}'`);
-        return;
-    }
+        const ukAirportCode = row[0]; // Departure airport (either MAN or LGW)
+        const destinationCode = row[1]; // Destination airport code
     
-    // If the aeroplane model is invalid, log an error and skip this row
-    if (!aeroplane) {
-        console.error(`Error: Invalid aeroplane model '${row[2]}'`);
-        return;
-    }
+        // Find the airport in the list by its code from the current row
+        const airport = airports.find(a => a.code === destinationCode);
+        const aeroplane = aeroplanes.find(a => a.model === row[2]);
 
-    // Check if the distance to the destination exceeds the aeroplane's max flight range
-    const flightDistance = airport.distanceFromMAN;
-    if (flightDistance > aeroplane.maxFlightRange) {
-        console.error(`Error: Flight distance to ${airport.name} (${flightDistance} km) exceeds ${aeroplane.model}'s max range (${aeroplane.maxFlightRange} km)`);
-        return;
-    }
-
-    // Parses seat bookings from the row data
-    const bookings = {
-        economy: parseInt(row[3]),
-        business: parseInt(row[4]),
-        firstClass: parseInt(row[5])
-    };
-
-    // Parses ticket prices from the row data
-    const prices = {
-        economy: parseFloat(row[6]),
-        business: parseFloat(row[7]),
-        firstClass: parseFloat(row[8])
-    };
-
-    // Check for overbooking in each class, logging an error and skipping if overbooked
-    if (bookings.economy > aeroplane.economySeats) {
-        console.error(`Error: Overbooking in economy class. Booked: ${bookings.economy}, Available: ${aeroplane.economySeats}`);
-        return;
-    }
-
-    if (bookings.business > aeroplane.businessSeats) {
-        console.error(`Error: Overbooking in business class. Booked: ${bookings.business}, Available: ${aeroplane.businessSeats}`);
-        return;
-    }
+        // If the airport code is invalid, log an error and skip this row
+        if (!airport) { 
+            console.error(`Error: Invalid airport code '${row[1]}'`);
+            return;
+        }
     
-    if (bookings.firstClass > aeroplane.firstClassSeats) {
-        console.error(`Error: Overbooking in first class. Booked: ${bookings.firstClass}, Available: ${aeroplane.firstClassSeats}`);
-        return;
-    }
+        // If the aeroplane model is invalid, log an error and skip this row
+        if (!aeroplane) {
+            console.error(`Error: Invalid aeroplane model '${row[2]}'`);
+            return;
+        }
 
-    // If all checks pass, add the flight details to output
-    const flight = { airport, aeroplane, bookings, prices };
-    outputLine += displayFlightDetails(flight) + '\n';
-});
+        // Determine the flight distance based on the departure airport (MAN or LGW)
+        const flightDistance = (ukAirportCode === "MAN") ? airport.distanceFromMAN : airport.distanceFromLGW;
+        // Check if the calculated flight distance exceeds the aeroplane's maximum range
+        if (flightDistance > aeroplane.maxFlightRange) {
+            console.error(`Error: Flight distance to ${airport.name} (${flightDistance} km) exceeds ${aeroplane.model}'s max range (${aeroplane.maxFlightRange} km)`);
+            return;
+        }
+
+        // Parses seat bookings from the row data
+        const bookings = {
+            economy: parseInt(row[3]),
+            business: parseInt(row[4]),
+            firstClass: parseInt(row[5])
+        }
+
+        // Parses ticket prices from the row data
+        const prices = {
+            economy: parseFloat(row[6]),
+            business: parseFloat(row[7]),
+            firstClass: parseFloat(row[8])
+        }
+
+        // Check for overbooking in each class, logging an error and skipping if overbooked
+        if (bookings.economy > aeroplane.economySeats) {
+            console.error(`Error: Overbooking in economy class. Booked: ${bookings.economy}, Available: ${aeroplane.economySeats}`);
+            return;
+        }
+
+        if (bookings.business > aeroplane.businessSeats) {
+            console.error(`Error: Overbooking in business class. Booked: ${bookings.business}, Available: ${aeroplane.businessSeats}`);
+            return;
+        }
+    
+        if (bookings.firstClass > (aeroplane.firstClassSeats && aeroplane.firstClassSeats == 0)) {
+            console.error("Error: This Flight does not contain First-Class Seats")
+        }
+        else if (bookings.firstClass > aeroplane.firstClassSeats) {
+            console.error(`Error: Overbooking in first class. Booked: ${bookings.firstClass}, Available: ${aeroplane.firstClassSeats}`);
+            return;
+        }
+
+        // If all checks pass, add the flight details to output
+        const flight = { airport, aeroplane, bookings, prices };
+        outputLine += displayFlightDetails(flight) + '\n';
+    });
 }
 
 // Clear any old output file before generating a new one
